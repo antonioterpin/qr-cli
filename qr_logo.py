@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-CLI tool to generate a QR code with a logo embedded in the middle.
+"""CLI tool to generate a QR code with a logo embedded in the middle.
 
 Usage:
     python qr_logo.py <url> <logo_path> [-o OUTPUT] [--size SIZE] [--box-size N]
@@ -8,13 +7,15 @@ Usage:
 
 Example:
     python qr_logo.py "https://example.com" logo.png -o qr.png
+
 """
 import argparse
 import sys
 from pathlib import Path
+
 import qrcode
-from qrcode.constants import ERROR_CORRECT_H
 from PIL import Image
+from qrcode.constants import ERROR_CORRECT_H
 
 
 def generate_qr_with_logo(
@@ -80,38 +81,82 @@ def generate_qr_with_logo(
 
 
 def main() -> int:
+    """CLI entry point for QR code generation with logo embedding."""
     parser = argparse.ArgumentParser(
         description="Generate a QR code with a logo in the middle."
     )
+    logos_dir = Path(__file__).resolve().parent / "logos"
+
     parser.add_argument("url", help="URL or text to encode in the QR code")
-    parser.add_argument("logo", help="Path to the logo image (png/jpg with or without alpha)")
     parser.add_argument(
-        "-o", "--output", default="qrcode.png",
+        "logo",
+        nargs="?",
+        default=None,
+        help="Path to the logo image (png/jpg with or without alpha)",
+    )
+
+    builtin = parser.add_argument_group(
+        "built-in logos (use instead of the logo argument)"
+    )
+    builtin.add_argument(
+        "--arXiv",
+        action="store_const",
+        const=str(logos_dir / "arXiv.jpg"),
+        dest="builtin_logo",
+        help="Use the bundled arXiv logo",
+    )
+    builtin.add_argument(
+        "--github",
+        action="store_const",
+        const=str(logos_dir / "github.jpg"),
+        dest="builtin_logo",
+        help="Use the bundled GitHub logo",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default="qrcode.png",
         help="Output image path (default: qrcode.png). Extension controls format.",
     )
     parser.add_argument(
-        "--box-size", type=int, default=10,
+        "--box-size",
+        type=int,
+        default=10,
         help="Pixel size of each QR module (default: 10)",
     )
     parser.add_argument(
-        "--border", type=int, default=4,
+        "--border",
+        type=int,
+        default=4,
         help="QR border width in modules (default: 4, min 4 recommended)",
     )
     parser.add_argument(
-        "--logo-ratio", type=float, default=0.22,
+        "--logo-ratio",
+        type=float,
+        default=0.22,
         help="Logo size as fraction of QR width (default: 0.22, keep <= 0.30)",
     )
-    parser.add_argument("--fill", default="black", help="QR foreground color (default: black)")
-    parser.add_argument("--bg", default="white", help="QR background color (default: white)")
+    parser.add_argument(
+        "--fill", default="black", help="QR foreground color (default: black)"
+    )
+    parser.add_argument(
+        "--bg", default="white", help="QR background color (default: white)"
+    )
     args = parser.parse_args()
 
+    logo_path = args.builtin_logo or args.logo
+    if logo_path is None:
+        parser.error("provide a logo path or use a built-in logo (--arXiv, --github)")
+
     if not 0.05 <= args.logo_ratio <= 0.35:
-        parser.error("--logo-ratio should be between 0.05 and 0.35 to keep QR scannable")
+        parser.error(
+            "--logo-ratio should be between 0.05 and 0.35 to keep QR scannable"
+        )
 
     try:
         out = generate_qr_with_logo(
             url=args.url,
-            logo_path=args.logo,
+            logo_path=logo_path,
             output_path=args.output,
             box_size=args.box_size,
             border=args.border,

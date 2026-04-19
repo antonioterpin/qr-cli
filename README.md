@@ -12,8 +12,8 @@ Uses error correction level H so the QR stays scannable with the logo on top.
 ```bash
 uv run qr_logo.py \
   "https://arxiv.org/abs/2508.10480" \
-  /Users/antonioterpin/Downloads/logo_arXiv.jpg \
-  -o /Users/antonioterpin/Downloads/arxiv_qr.png
+  /path/to/arXiv/logo.jpg \
+  -o /output/path.png
 ```
 
 `uv run` creates an ephemeral env with the dependencies declared in
@@ -26,8 +26,8 @@ uv tool install .
 
 # Now `qr-logo` is on your PATH:
 qr-logo "https://arxiv.org/abs/2508.10480" \
-  /Users/antonioterpin/Downloads/logo_arXiv.jpg \
-  -o /Users/antonioterpin/Downloads/arxiv_qr.png
+  /path/to/arXiv/logo.jpg \
+  -o /output/path.jpg
 ```
 
 Upgrade later after editing the code:
@@ -47,7 +47,12 @@ qr-logo <url> <logo> [-o OUTPUT] [--box-size N] [--border N]
   Keep it ≤ 0.30 so scanners stay happy.
 - `--box-size` — pixel size per QR module (default 10).
 - `--border` — border width in modules (default 4; spec minimum).
-- Output format is inferred from the `-o` extension (`.png`, `.jpg`, …).
+- Output format is inferred from the `-o` extension (`.png`, `.jpg`, ...).
+
+We also provide some default logos (the ones I always need):
+
+- `--arXiv` – for link to arXiv preprints
+- `--github` – for link to github repositories
 
 ## Development
 
