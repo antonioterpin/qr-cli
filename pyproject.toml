@@ -17,3 +17,43 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 only-include = ["qr_logo.py"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pre_commit==4.0.1",
+]
+
+# Ruff configuration for linting and modern typing enforcement
+[tool.ruff]
+line-length = 80
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "W505",   # doc-line-too-long
+    "F",      # pyflakes
+    "UP",     # pyupgrade
+    "I",      # isort
+    "N",      # pep8-naming
+    "D",      # pydocstyle
+    "PL",     # pylint
+    "RUF",    # ruff-specific rules
+]
+
+ignore = [
+    "D100",   # Missing docstring in public module
+    "D104",   # Missing docstring in public package
+    "D105",   # Missing docstring in magic method
+    "PLR0913", # Too many arguments to function call
+    "PLR2004", # Magic value used in comparison
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 80
+max-doc-length = 80

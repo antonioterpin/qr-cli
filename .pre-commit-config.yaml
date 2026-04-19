@@ -1,0 +1,40 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.1
+    hooks:
+      - id: ruff
+        stages: [pre-commit, pre-push]
+        args:
+          [
+            "--fix",
+            "--line-length=80",
+            "--config=lint.pycodestyle.max-doc-length=80",
+            "--select=D,PD,W505",
+          ]
+      - id: ruff
+        name: ruff-typing-modernizer
+        stages: [pre-commit, pre-push]
+        args:
+          [
+            "--fix",
+            "--select=UP,F401,F811,I",
+            "--line-length=80",
+          ]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.0
+    hooks:
+      - id: pyupgrade
+        args: [--py39-plus]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
